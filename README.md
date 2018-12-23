@@ -1,16 +1,23 @@
 # Heroku Platform API
 
-[![GoDoc](https://godoc.org/github.com/heroku/heroku-go/v3?status.svg)](https://godoc.org/github.com/heroku/heroku-go/v3)
+[![GoDoc](https://godoc.org/github.com/heroku/heroku-go/v4?status.svg)](https://godoc.org/github.com/heroku/heroku-go/v4)
 
-An API client interface for Heroku Platform API for the Go (golang) programming language.
+An API client interface for Heroku Platform API for the Go (golang)
+programming language.
 
 ## Installation
 
-To download, build, and install the package:
+Going updates will only be made to to `github.com/heroku/heroku-go/v4`, which
+supports Go 1.11 modules.
 
-```
-$ go get github.com/heroku/heroku-go/v3
-```
+To use this package with Go 1.11 module support simply run `go build` in your
+project (with `GO111MODULE=on`.)
+
+To use this package without Go 1.11 module support [TODO] 
+
+It is **not** recommended to use the older `github.com/heroku/heroku-go/v3`
+package. This package only exists to prevent breaking existing dependencies
+that require it.
 
 ## Example
 
@@ -23,7 +30,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/heroku/heroku-go/v3"
+	"github.com/heroku/heroku-go/v4"
 )
 
 var (
