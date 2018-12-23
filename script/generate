@@ -1,22 +1,44 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-if [ -n "${DEBUG-}" ]; then
-  set -x
+set -ex
+
+: ${UPDATE_SCHEMA:=1}
+
+while getopts "nv:" opt; do
+  case $opt in
+    n)
+      UPDATE_SCHEMA=0
+      ;;
+    v)
+      VERSION=$OPTARG
+      VERSION_LABEL="v${VERSION}"
+      ;;
+    \?)
+      echo "error processing options"
+      exit 0
+      ;;
+    esac
+done
+
+if [ -z "${VERSION}" ]; then
+  echo "-v version required"
+  exit 0
 fi
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.."; pwd)"
 
-curl -so v3/schema.json https://api.heroku.com/schema \
+if [ $UPDATE_SCHEMA -eq 1 ]; then
+curl -so ${VERSION_LABEL}/schema.json https://api.heroku.com/schema \
   -H "Accept: application/vnd.heroku+json; version=3"
+fi
 
 go get -u github.com/interagent/schematic/cmd/schematic
-schematic v3/schema.json > v3/heroku.go
+schematic ${VERSION_LABEL}/schema.json > ${VERSION_LABEL}/heroku.go
 
 # Heroku's schema.json does not specify a "version" key
 # Replace Version="" with Version="v3"
 sed -E -i '' \
   's/^([[:space:]]*Version[[:space:]]*=[[:space:]]*)""$/\1"v3"/' \
-  v3/heroku.go
+  ${VERSION_LABEL}/heroku.go
 
-gofmt -w v3/heroku.go
+gofmt -w ${VERSION_LABEL}/heroku.go
