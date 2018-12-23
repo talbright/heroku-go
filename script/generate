@@ -4,7 +4,16 @@ set -ex
 
 : ${UPDATE_SCHEMA:=1}
 
-while getopts "nv:" opt; do
+function usage() {
+cat <<EOT
+$0 [ARGS]
+  -n suppress download of latest schema
+  -v [NUM] version number to generate (3|4)
+EOT
+exit $1
+}
+
+while getopts "hnv:" opt; do
   case $opt in
     n)
       UPDATE_SCHEMA=0
@@ -13,16 +22,17 @@ while getopts "nv:" opt; do
       VERSION=$OPTARG
       VERSION_LABEL="v${VERSION}"
       ;;
+    h)
+      usage 1
+      ;;
     \?)
-      echo "error processing options"
-      exit 0
+      usage 0
       ;;
     esac
 done
 
 if [ -z "${VERSION}" ]; then
-  echo "-v version required"
-  exit 0
+  usage 1
 fi
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.."; pwd)"
